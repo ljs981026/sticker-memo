@@ -26,7 +26,8 @@ export default class MemoStore {
     makeObservable(this, {
       memos: observable,
       addMemo: action,
-      editMemo: action
+      editMemo: action,
+      SetWidthHeight: action
     })
   }
   addMemo() {
@@ -37,5 +38,10 @@ export default class MemoStore {
   }
   getMemoIndex(id) {
     return this.memos.findIndex(memo => memo.id === id);
+  }
+  SetWidthHeight(id, width, height) {
+    const idx = this.getMemoIndex(id);
+    this.memos[idx].width = width;
+    this.memos[idx].height = height;
   }
 }

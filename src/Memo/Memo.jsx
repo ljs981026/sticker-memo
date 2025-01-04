@@ -1,13 +1,18 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Memo.scss";
 import Draggable from "@ljs981026/draggable";
 import { debounce } from "underscore";
 
-const Memo = ({item, Delete, Edit, SetPosition, SetWidthHight}) => {
+const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
   const handleRef = useRef(null);
-  const onChangeMemo = useMemo(() => debounce(e => Edit(item.id, e.target.value),500), [item.id, Edit]);
+  const memoContainer = useRef(null); 
+  const onChangeMemo = useMemo(() => debounce(e => Edit(item.id, e.target.value), 500), [item.id, Edit]);
+  const onChangeSize = useMemo(() => debounce((entry) => {
+    const {width, height} = entry[0].contentRect;
+    SetWidthHeight(item.id, width, height);
+  }, 100), [item.id, SetWidthHeight])
 
   useEffect(() => {
     return () => {
@@ -15,14 +20,23 @@ const Memo = ({item, Delete, Edit, SetPosition, SetWidthHight}) => {
     }
   },[onChangeMemo])
 
+  useLayoutEffect(() => {
+    let ro = new ResizeObserver(onChangeSize);
+    ro.observe(memoContainer.current);
+    return () => {
+      ro.disconnect();
+      ro = null;
+    }
+  })
+
   return (
     <Draggable handleRef={handleRef} onMove={(x, y) => console.log(x, y)} x={0} y={0}>
-      <div ref={handleRef} className="memo-container" style={{width: `${250}px`, height: `${300}px`}}>
+      <div ref={memoContainer} className="memo-container" style={{width: `${250}px`, height: `${300}px`}}>
         <div className="menu">
-          <DragHandleIcon sx={{cursor: "move", fontSize: "25px"}} />
+          <DragHandleIcon ref={handleRef} sx={{cursor: "move", fontSize: "25px"}} />
           <CloseIcon sx={{cursor: "pointer", fontSize: "25px", float: "right"}}/>
         </div>
-        <textarea 
+        <textarea           
           className="memo-text-area" 
           defaultValue={item.content} 
           name="txt" 
