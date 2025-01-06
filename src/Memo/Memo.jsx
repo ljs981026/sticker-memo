@@ -10,16 +10,19 @@ const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
   const handleRef = useRef(null);
   const memoContainer = useRef(null); 
   const onChangeMemo = useMemo(() => debounce(e => Edit(item.id, e.target.value), 500), [item.id, Edit]);
+  const onChangePosition = useCallback((x, y) => SetPosition(item.id, x, y), [item.id, SetPosition]);
   const onChangeSize = useMemo(() => debounce((entry) => {
     const {width, height} = entry[0].contentRect;
     SetWidthHeight(item.id, width, height);
-  }, 100), [item.id, SetWidthHeight])
+  }, 100), [item.id, SetWidthHeight]);
+  const onCLickDelete = useCallback(() => Delete(item.id), [item.id, Delete])
 
   useEffect(() => {
     return () => {
       onChangeMemo.cancel()
+      onChangeSize.cancel()
     }
-  },[onChangeMemo])
+  },[onChangeMemo, onChangeSize])
 
   useLayoutEffect(() => {
     let ro = new ResizeObserver(onChangeSize);
@@ -29,15 +32,13 @@ const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
       ro = null;
     }
   })
-
-  const onChangePosition = useCallback((x, y) => SetPosition(item.id, x, y), [item.id, SetPosition])
   
   return (
     <Draggable handleRef={handleRef} onMove={onChangePosition} x={0} y={0}>
       <div ref={memoContainer} className="memo-container" style={{width: `${250}px`, height: `${300}px`}}>
         <div className="menu">
           <DragHandleIcon ref={handleRef} sx={{cursor: "move", fontSize: "25px"}} />
-          <CloseIcon sx={{cursor: "pointer", fontSize: "25px", float: "right"}}/>
+          <CloseIcon sx={{cursor: "pointer", fontSize: "25px", float: "right"}} onClick={onCLickDelete}/>
         </div>
         <textarea           
           className="memo-text-area" 

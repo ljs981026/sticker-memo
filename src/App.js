@@ -8,11 +8,12 @@ function App({store}) {
   const Edit = useCallback((id, content) => store.editMemo(id, content), [store]);
   const SetWidthHeight = useCallback((id, width, height) => store.setWidthHeight(id, width, height), [store]);
   const SetPosition = useCallback((id, x, y) => store.setPosition(id, x, y), [store]);
+  const removeMemo = useCallback((id) => store.removeMemo(id), [store]);
   return (
     <>
     {
       store.memos.map((memo) => 
-        <Memo key={memo.id} item={memo} Edit={Edit} SetWidthHeight={SetWidthHeight} SetPosition={SetPosition}/>
+        <Memo key={memo.id} item={memo} Delete={removeMemo} Edit={Edit} SetWidthHeight={SetWidthHeight} SetPosition={SetPosition}/>
       )
     }
     <AddIcon sx={{float: "right", backgroundColor: "#e4e4e4", borderRadius: "5px", cursor: "pointer", fontSize: "30px", border: "1px solid black"}} onClick={AddMemo}/>

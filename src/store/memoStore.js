@@ -28,7 +28,8 @@ export default class MemoStore {
       addMemo: action,
       editMemo: action,
       setWidthHeight: action,
-      setPosition: action
+      setPosition: action,
+      removeMemo: action
     })
   }
   addMemo() {
@@ -36,6 +37,9 @@ export default class MemoStore {
   }
   editMemo(id, content) {
     this.memos[this.getMemoIndex(id)].content = content;
+  }
+  removeMemo(id) {    
+    this.memos.splice(this.getMemoIndex(id), 1);
   }
   getMemoIndex(id) {
     return this.memos.findIndex(memo => memo.id === id);
