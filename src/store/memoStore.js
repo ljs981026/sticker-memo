@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, autorun, makeObservable, observable } from "mobx";
 import {v1 as uuid_v1} from "uuid";
 
 export class MemoModel {
@@ -20,7 +20,8 @@ export class MemoModel {
 }
 
 export default class MemoStore {
-  // id = "memoStore"
+  id = "memoStore";
+  localStorage = null;
   memos = [];
   constructor() {
     makeObservable(this, {
@@ -29,7 +30,16 @@ export default class MemoStore {
       editMemo: action,
       setWidthHeight: action,
       setPosition: action,
-      removeMemo: action
+      removeMemo: action,
+      loadLocalStorage: action
+    })
+    
+    this.initLocalStorage()
+
+    autorun(() => {
+      if (this.localStorage !== null) {
+        this.localStorage.setItem(this.id, JSON.stringify(this.memos))
+      }
     })
   }
   addMemo() {
@@ -53,5 +63,17 @@ export default class MemoStore {
     const idx = this.getMemoIndex(id);
     this.memos[idx].x = x;
     this.memos[idx].y = y;
+  }
+  initLocalStorage() {
+    if (window.localStorage[this.id] == null) {
+      this.localStorage = window.localStorage;
+      this.localStorage.setItem(this.id, JSON.stringify(this.memos.shift()));
+    } else {
+      this.localStorage = window.localStorage;
+      this.loadLocalStorage();
+    }
+  }
+  loadLocalStorage() {    
+    this.memos = JSON.parse(this.localStorage.getItem(this.id));
   }
 }

@@ -34,8 +34,8 @@ const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
   })
   
   return (
-    <Draggable handleRef={handleRef} onMove={onChangePosition} x={0} y={0}>
-      <div ref={memoContainer} className="memo-container" style={{width: `${250}px`, height: `${300}px`}}>
+    <Draggable handleRef={handleRef} onMove={onChangePosition} x={item.x} y={item.y}>
+      <div ref={memoContainer} className="memo-container" style={{width: `${item.width}px`, height: `${item.height}px`}}>
         <div className="menu">
           <DragHandleIcon ref={handleRef} sx={{cursor: "move", fontSize: "25px"}} />
           <CloseIcon sx={{cursor: "pointer", fontSize: "25px", float: "right"}} onClick={onCLickDelete}/>
