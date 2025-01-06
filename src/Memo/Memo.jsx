@@ -1,9 +1,10 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Memo.scss";
 import Draggable from "@ljs981026/draggable";
 import { debounce } from "underscore";
+import { observer } from "mobx-react";
 
 const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
   const handleRef = useRef(null);
@@ -29,8 +30,10 @@ const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
     }
   })
 
+  const onChangePosition = useCallback((x, y) => SetPosition(item.id, x, y), [item.id, SetPosition])
+  
   return (
-    <Draggable handleRef={handleRef} onMove={(x, y) => console.log(x, y)} x={0} y={0}>
+    <Draggable handleRef={handleRef} onMove={onChangePosition} x={0} y={0}>
       <div ref={memoContainer} className="memo-container" style={{width: `${250}px`, height: `${300}px`}}>
         <div className="menu">
           <DragHandleIcon ref={handleRef} sx={{cursor: "move", fontSize: "25px"}} />
@@ -49,4 +52,4 @@ const Memo = ({item, Delete, Edit, SetPosition, SetWidthHeight}) => {
   )
 }
 
-export default Memo;
+export default observer(Memo);

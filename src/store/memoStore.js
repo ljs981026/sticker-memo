@@ -27,7 +27,8 @@ export default class MemoStore {
       memos: observable,
       addMemo: action,
       editMemo: action,
-      SetWidthHeight: action
+      setWidthHeight: action,
+      setPosition: action
     })
   }
   addMemo() {
@@ -39,9 +40,14 @@ export default class MemoStore {
   getMemoIndex(id) {
     return this.memos.findIndex(memo => memo.id === id);
   }
-  SetWidthHeight(id, width, height) {
+  setWidthHeight(id, width, height) {
     const idx = this.getMemoIndex(id);
     this.memos[idx].width = width;
     this.memos[idx].height = height;
+  }
+  setPosition(id, x, y) {
+    const idx = this.getMemoIndex(id);
+    this.memos[idx].x = x;
+    this.memos[idx].y = y;
   }
 }
